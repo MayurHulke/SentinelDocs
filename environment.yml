@@ -1,0 +1,22 @@
+name: sentineldocs
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - streamlit
+      - pymupdf
+      - python-docx
+      - langchain
+      - ollama
+      - faiss-cpu
+      - fpdf
+      - sentence-transformers
+      - langchain-community
+      - pandas
+      - numpy
+      - matplotlib
+      - plotly
+      - psutil
+      - dask
