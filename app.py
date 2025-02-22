@@ -11,17 +11,17 @@ import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-# Load NLP model for entity extraction
+# Load NLP model for NER
 nlp = spacy.load("en_core_web_sm")
 
-# Load sentence-transformers model for AI embeddings
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")  # Small, fast, and effective model
+# Load transformer model for embeddings
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# **Initialize Session State for Question History**
+# Initialize session state for query history
 if "user_questions" not in st.session_state:
-    st.session_state.user_questions = []  # Store all past user questions
+    st.session_state.user_questions = []
 
-# **Extract Text from Multiple Documents**
+# Extract text from uploaded files
 def extract_text_from_files(uploaded_files):
     documents = {}
     for uploaded_file in uploaded_files:
@@ -40,71 +40,102 @@ def extract_text_from_files(uploaded_files):
         documents[uploaded_file.name] = text
     return documents
 
-# **AI-Powered Q&A**
+# Generate response using LLM
 def generate_response(question, document_text):
     llm = Ollama(model="deepseek-r1:8b")
     prompt = PromptTemplate.from_template(
         """
-        You are an AI assistant analyzing confidential company documents. Given the extracted text:
+        You are an AI assistant analyzing documents. Given the extracted text:
         {document_text}
-        Answer the following question concisely while preserving document confidentiality:
+        Answer concisely and accurately:
         {question}
         """
     )
     return llm(prompt.format(document_text=document_text[:5000], question=question))
 
-# **Streamlit UI**
-st.title("🙈 SentinelDocs")
+# Configure Streamlit page layout
+st.set_page_config(page_title="SentinelDocs", page_icon="🙈", layout="centered")
 
-uploaded_files = st.file_uploader("Upload multiple documents (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
+# Render title and description
+st.markdown(
+    """
+    <div style='text-align: center;'>
+        <h1>🙈 SentinelDocs</h1>
+        <h4 style='color: gray;'>Your Private AI-Powered Document Analyst</h4>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.write("")
+
+# File upload interface
+st.subheader("📂 Upload Your Documents")
+uploaded_files = st.file_uploader(
+    "Upload PDF, DOCX, or TXT files", type=["pdf", "docx", "txt"], accept_multiple_files=True
+)
 
 if uploaded_files:
     document_texts = extract_text_from_files(uploaded_files)
 
     if document_texts:
-        st.write("### 🔍 Extracted Content Preview")
-        for doc_name, doc_text in document_texts.items():
-            st.subheader(doc_name)
-            st.text_area("Extracted Text", doc_text[:1000], height=200)  # Show first 1000 chars
+        st.markdown("---")
+        
+        # Display extracted text
+        st.subheader("📖 Extracted Content")
+        with st.expander("📄 Click to View Extracted Text"):
+            for doc_name, doc_text in document_texts.items():
+                st.markdown(f"**{doc_name}**")
+                st.text_area("", doc_text[:1000], height=150)
 
-        # **Suggested Questions**
+        # Suggested questions for user
+        st.markdown("---")
+        st.subheader("💡 Ask Me Anything About Your Documents")
+
         common_questions = [
-            "What are the key findings of this document?",
+            "What are the key findings?",
             "Can you summarize the main points?",
-            "Are there any important deadlines or dates mentioned?",
-            "What action items or recommendations are in this document?",
-            "Who are the key people or organizations referenced?",
+            "Are there any important deadlines?",
+            "What action items are recommended?",
+            "Who are the key people mentioned?",
             "What financial or legal details are covered?",
-            "Are there any risks or concerns discussed?",
-            "Does this document contain confidential or sensitive information?"
+            "Are there any risks or concerns?",
+            "Does this document contain confidential data?"
         ]
 
-        st.write("### 💡 Suggested Questions")
-        selected_question = st.selectbox("Select a suggested question or type your own:", ["Choose a question"] + common_questions)
+        selected_question = st.selectbox(
+            "Pick a suggested question or type your own:", ["Choose a question"] + common_questions
+        )
 
-        # **User Question Input**
-        user_question = st.text_input("Or enter your own question:", value=selected_question if selected_question != "Choose a question" else "")
+        # User input for custom questions
+        user_question = st.text_input(
+            "Or enter your own question:", value=selected_question if selected_question != "Choose a question" else ""
+        )
 
-        if st.button("Get AI Answer"):
+        # Generate and display AI response
+        if st.button("🔍 Analyse", use_container_width=True):
             doc_name = list(document_texts.keys())[0]  # Assume first document is most relevant
             response = generate_response(user_question, document_texts[doc_name])
 
-            # **Save the user's question to history**
+            # Append to query history
             st.session_state.user_questions.append(user_question)
 
-            st.write(f"**AI Answer from:** {doc_name}")
-            st.success(response)
+            st.markdown("---")
+            st.subheader("💡 Here's what we found")
+            st.markdown(f"**From Document:** {doc_name}")
+            st.info(response)  # Display response
 
-        # **Show User's Question History (Now Stores All Questions)**
-        with st.expander("📝 Previous Questions"):
+        # Display query history in sidebar
+        with st.sidebar:
+            st.subheader("💬 Question History")
             if st.session_state.user_questions:
                 for i, q in enumerate(st.session_state.user_questions, 1):
                     st.write(f"{i}. {q}")
             else:
                 st.write("No previous questions yet.")
 
-        # **Generate PDF Report**
-        if st.button("🖇️ Generate PDF Report"):
+        # Generate and download PDF report
+        st.markdown("---")
+        if st.button("📄 Download Insights Report", use_container_width=True):
             insights = {doc: generate_response("Summarize the key insights", text) for doc, text in document_texts.items()}
             pdf_file = generate_pdf_report(insights)
             with open(pdf_file, "rb") as file:

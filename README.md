@@ -1,6 +1,8 @@
 # 🙈 SentinelDocs: AI-Powered Confidential Document Intelligence  
 🔐 **SentinelDocs** is a **privacy-first AI assistant** designed to **analyze, summarize, and search confidential documents** with **advanced natural language understanding**. Runs **entirely offline**, ensuring **100% data privacy**. It supports PDFs, DOCX, and TXT files, enabling users to chat with documents, extract key insights, and generate reports—all locally with zero cloud dependency.
 
+![SentinelDocs Demo](./assets/SentinelDocs-demo.gif)
+
 ---
 
 ## 🚀 Features  
