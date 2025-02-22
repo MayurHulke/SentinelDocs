@@ -41,12 +41,6 @@ def extract_entities(text):
     doc = nlp(text)
     return {ent.text: ent.label_ for ent in doc.ents}
 
-# AI-based summarization
-def generate_summary(document_text):
-    llm = Ollama(model="mistral")
-    prompt = f"Summarize the following document in bullet points:\n\n{document_text[:5000]}"
-    return llm(prompt)
-
 # AI-powered Q&A
 def generate_response(question, document_text):
     llm = Ollama(model="deepseek-r1:8b")
@@ -94,7 +88,7 @@ def generate_pdf_report(insights):
     return "AI_Document_Insights.pdf"
 
 # Streamlit UI
-st.title("📄 AI-Powered Confidential Document Q&A (Local)")
+st.title("🙈 SentinelDocs")
 
 uploaded_files = st.file_uploader("Upload multiple documents (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
 
@@ -106,26 +100,33 @@ if uploaded_files:
         for doc_name, doc_text in document_texts.items():
             st.subheader(doc_name)
             st.text_area("Extracted Text", doc_text[:1000], height=200)  # Show first 1000 chars
-        
-        # Smart Keyword Extraction
-        st.write("### 🏷️ Extracted Keywords & Entities")
-        for doc_name, doc_text in document_texts.items():
-            st.subheader(doc_name)
-            st.json(extract_entities(doc_text))
 
-        # AI Summaries
-        st.write("### ✍️ AI-Generated Summaries")
-        for doc_name, doc_text in document_texts.items():
-            st.subheader(doc_name)
-            summary = generate_summary(doc_text)
-            st.success(summary)
+        # Collapsible Section for Extracted Keywords & Entities
+        with st.expander("🏷️ Extracted Keywords & Entities (Click to Expand)"):
+            for doc_name, doc_text in document_texts.items():
+                st.subheader(doc_name)
+                st.json(extract_entities(doc_text))
 
         # Build FAISS Index with Real AI Embeddings
         index, texts, doc_names = build_faiss_index(document_texts)
 
+        # **Fixed Set of Suggested Questions**
+        st.write("### 💡 Suggested Questions")
+        common_questions = [
+            "What are the key findings of this document?",
+            "Can you summarize the main points?",
+            "Are there any important deadlines or dates mentioned?",
+            "What action items or recommendations are in this document?",
+            "Who are the key people or organizations referenced?",
+            "What financial or legal details are covered?",
+            "Are there any risks or concerns discussed?",
+            "Does this document contain confidential or sensitive information?"
+        ]
+
+        selected_question = st.selectbox("Select a suggested question or type your own:", ["Choose a question"] + common_questions)
+
         # User Question for AI
-        st.write("### 🤖 Ask AI a Question")
-        user_question = st.text_input("Enter your question:")
+        user_question = st.text_input("Or enter your own question:", value=selected_question if selected_question != "Choose a question" else "")
 
         if st.button("Get AI Answer"):
             matched_doc, relevant_text = semantic_search(user_question, index, texts, doc_names)
@@ -134,8 +135,8 @@ if uploaded_files:
             st.success(response)
 
         # Generate PDF Report
-        if st.button("📄 Generate PDF Report"):
-            insights = {doc: generate_summary(text) for doc, text in document_texts.items()}
+        if st.button("📎 Generate PDF Report"):
+            insights = {doc: generate_response("Summarize the key insights", text) for doc, text in document_texts.items()}
             pdf_file = generate_pdf_report(insights)
             with open(pdf_file, "rb") as file:
                 st.download_button("Download Report", file, file_name="AI_Report.pdf", mime="application/pdf")
