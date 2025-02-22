@@ -17,7 +17,11 @@ nlp = spacy.load("en_core_web_sm")
 # Load sentence-transformers model for AI embeddings
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")  # Small, fast, and effective model
 
-# Extract text from multiple documents
+# **Initialize Session State for Question History**
+if "user_questions" not in st.session_state:
+    st.session_state.user_questions = []  # Store all past user questions
+
+# **Extract Text from Multiple Documents**
 def extract_text_from_files(uploaded_files):
     documents = {}
     for uploaded_file in uploaded_files:
@@ -36,12 +40,7 @@ def extract_text_from_files(uploaded_files):
         documents[uploaded_file.name] = text
     return documents
 
-# Entity extraction for keywords
-def extract_entities(text):
-    doc = nlp(text)
-    return {ent.text: ent.label_ for ent in doc.ents}
-
-# AI-powered Q&A
+# **AI-Powered Q&A**
 def generate_response(question, document_text):
     llm = Ollama(model="deepseek-r1:8b")
     prompt = PromptTemplate.from_template(
@@ -54,40 +53,7 @@ def generate_response(question, document_text):
     )
     return llm(prompt.format(document_text=document_text[:5000], question=question))
 
-# Semantic Search with FAISS and Real Embeddings
-def build_faiss_index(documents):
-    """Convert document text to embeddings and build a FAISS index."""
-    texts = list(documents.values())
-    embeddings = embedding_model.encode(texts, convert_to_numpy=True)
-    
-    index = faiss.IndexFlatL2(embeddings.shape[1])  # L2 distance (euclidean)
-    index.add(embeddings)
-    
-    return index, texts, list(documents.keys())
-
-def semantic_search(query, index, texts, doc_names):
-    """Search for the most relevant document based on semantic meaning."""
-    query_embedding = embedding_model.encode([query], convert_to_numpy=True)
-    _, indices = index.search(query_embedding, k=1)  # Find the top match
-    matched_doc = doc_names[indices[0][0]]
-    return matched_doc, texts[indices[0][0]]
-
-# Generate PDF report
-def generate_pdf_report(insights):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, "AI Document Insights Report", ln=True, align="C")
-    pdf.ln(10)
-
-    for key, value in insights.items():
-        pdf.multi_cell(0, 10, f"{key}: {value}")
-
-    pdf.output("AI_Document_Insights.pdf")
-    return "AI_Document_Insights.pdf"
-
-# Streamlit UI
+# **Streamlit UI**
 st.title("🙈 SentinelDocs")
 
 uploaded_files = st.file_uploader("Upload multiple documents (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
@@ -101,17 +67,7 @@ if uploaded_files:
             st.subheader(doc_name)
             st.text_area("Extracted Text", doc_text[:1000], height=200)  # Show first 1000 chars
 
-        # Collapsible Section for Extracted Keywords & Entities
-        with st.expander("🏷️ Extracted Keywords & Entities (Click to Expand)"):
-            for doc_name, doc_text in document_texts.items():
-                st.subheader(doc_name)
-                st.json(extract_entities(doc_text))
-
-        # Build FAISS Index with Real AI Embeddings
-        index, texts, doc_names = build_faiss_index(document_texts)
-
-        # **Fixed Set of Suggested Questions**
-        st.write("### 💡 Suggested Questions")
+        # **Suggested Questions**
         common_questions = [
             "What are the key findings of this document?",
             "Can you summarize the main points?",
@@ -123,19 +79,32 @@ if uploaded_files:
             "Does this document contain confidential or sensitive information?"
         ]
 
+        st.write("### 💡 Suggested Questions")
         selected_question = st.selectbox("Select a suggested question or type your own:", ["Choose a question"] + common_questions)
 
-        # User Question for AI
+        # **User Question Input**
         user_question = st.text_input("Or enter your own question:", value=selected_question if selected_question != "Choose a question" else "")
 
         if st.button("Get AI Answer"):
-            matched_doc, relevant_text = semantic_search(user_question, index, texts, doc_names)
-            response = generate_response(user_question, relevant_text)
-            st.write(f"**AI Answer from:** {matched_doc}")
+            doc_name = list(document_texts.keys())[0]  # Assume first document is most relevant
+            response = generate_response(user_question, document_texts[doc_name])
+
+            # **Save the user's question to history**
+            st.session_state.user_questions.append(user_question)
+
+            st.write(f"**AI Answer from:** {doc_name}")
             st.success(response)
 
-        # Generate PDF Report
-        if st.button("📎 Generate PDF Report"):
+        # **Show User's Question History (Now Stores All Questions)**
+        with st.expander("📝 Previous Questions"):
+            if st.session_state.user_questions:
+                for i, q in enumerate(st.session_state.user_questions, 1):
+                    st.write(f"{i}. {q}")
+            else:
+                st.write("No previous questions yet.")
+
+        # **Generate PDF Report**
+        if st.button("🖇️ Generate PDF Report"):
             insights = {doc: generate_response("Summarize the key insights", text) for doc, text in document_texts.items()}
             pdf_file = generate_pdf_report(insights)
             with open(pdf_file, "rb") as file:
