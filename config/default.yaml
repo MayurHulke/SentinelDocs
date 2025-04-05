@@ -6,7 +6,7 @@ app:
   subtitle: "Your Private AI-Powered Document Analyst"
   logo_emoji: "📄"
   version: "1.0.0"
-  author: "SentinelDocs Team"
+  author: "Mayur"
   footer_text: "SentinelDocs - Your documents never leave your machine. All processing happens locally."
 
 # Document processing settings
