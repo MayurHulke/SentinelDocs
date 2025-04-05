@@ -5,17 +5,19 @@ dependencies:
   - python=3.10
   - pip
   - pip:
-      - streamlit
-      - pymupdf
-      - python-docx
-      - langchain
-      - ollama
-      - faiss-cpu
-      - fpdf
-      - sentence-transformers
-      - langchain-community
+      - streamlit>=1.22.0
+      - pymupdf>=1.22.5
+      - python-docx>=0.8.11
+      - spacy>=3.6.0
+      - langchain-core>=0.1.7
+      - langchain-community>=0.0.13
+      - langchain-ollama>=0.0.1
+      - faiss-cpu>=1.7.4
+      - fpdf>=1.7.2
+      - sentence-transformers>=2.2.2
+      - numpy<2.0.0
+      - watchdog>=3.0.0
       - pandas
-      - numpy
       - matplotlib
       - plotly
       - psutil
