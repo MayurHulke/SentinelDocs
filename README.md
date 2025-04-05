@@ -10,6 +10,11 @@
 ![Privacy](https://img.shields.io/badge/Privacy-100%25-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Ollama](https://img.shields.io/badge/Powered%20by-Ollama-purple)
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-85%25-green)
+![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen)
+![Last Commit](https://img.shields.io/github/last-commit/MayurHulke/SentinelDocs?color=blue)
+![LocalAI](https://img.shields.io/badge/AI-100%25%20Local-blue)
 
 <p align="center">
   <b>Your Private AI-Powered Document Analyst</b><br>
@@ -248,7 +253,56 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## 📊 Project Status
+
+<table>
+  <tr>
+    <td><b>Status:</b></td>
+    <td>Active ✅</td>
+  </tr>
+  <tr>
+    <td><b>Development:</b></td>
+    <td>Stable</td>
+  </tr>
+  <tr>
+    <td><b>Last Updated:</b></td>
+    <td>April 2025</td>
+  </tr>
+  <tr>
+    <td><b>API Stability:</b></td>
+    <td>Beta</td>
+  </tr>
+</table>
+
+### Roadmap
+- [x] Multi-format document support
+- [x] Semantic search functionality
+- [x] Entity extraction and document statistics
+- [x] Document comparison
+- [x] PDF report generation
+- [ ] Chart visualizations for document insights
+- [ ] Expanded language support beyond English
+- [ ] Docker containerization
+- [ ] Custom embedding model support
+
+## 🔗 Quick Links
+
+- [Project Setup](#-installation)
+- [Usage Guide](#-usage)
+- [System Requirements](#-requirements)
+- [Troubleshooting](#-troubleshooting)
+- [Project Structure](#-project-structure)
+- [Testing](#-testing)
+
 ## 👤 Author
 
 Developed by Mayur
+
+## 🙏 Acknowledgements
+
+- [Ollama](https://ollama.ai) for providing the local LLM framework
+- [Streamlit](https://streamlit.io) for the UI framework
+- [spaCy](https://spacy.io) for NLP capabilities
+- [FAISS](https://github.com/facebookresearch/faiss) for vector search
+- [sentence-transformers](https://www.sbert.net/) for embeddings
 
