@@ -1,0 +1,80 @@
+# SentinelDocs Configuration
+
+# Application settings
+app:
+  title: "SentinelDocs"
+  subtitle: "Your Private AI-Powered Document Analyst"
+  logo_emoji: "📄"
+  version: "1.0.0"
+  author: "SentinelDocs Team"
+  footer_text: "SentinelDocs - Your documents never leave your machine. All processing happens locally."
+
+# Document processing settings
+document:
+  supported_formats:
+    - pdf
+    - docx
+    - txt
+  max_file_size_mb: 50
+  max_chars_for_nlp: 100000
+  extract_entities: true
+
+# AI model settings
+ai:
+  default_model: "deepseek-r1:8b"
+  model_descriptions:
+    "deepseek-r1:8b": "Best for detailed analysis"
+    "mistral": "Good balance of speed and accuracy"
+    "llama3": "Best for creative responses"
+    "phi3:mini": "Fast and efficient"
+  context_window: 5000
+  
+# Semantic search settings
+search:
+  chunk_size: 1000
+  chunk_overlap: 200
+  top_k_results: 3
+
+# Report generation settings
+reports:
+  default_title: "SentinelDocs - Document Insights Report"
+  report_types:
+    - name: "Executive Summary"
+      prompt: "Create a concise executive summary of the document in 3-5 bullet points"
+    - name: "Key Insights"
+      prompt: "Summarize the key insights and takeaways from this document"
+    - name: "Full Analysis"
+      prompt: "Perform a detailed analysis of the document including key points, entities, recommendations, and potential issues"
+
+# UI settings
+ui:
+  theme_colors:
+    primary: "#4F46E5"
+    primary_light: "#818CF8"
+    secondary: "#06B6D4"
+    text_dark: "#1E293B"
+    text_light: "#64748B"
+    bg_light: "#F8FAFC"
+    bg_dark: "#0F172A"
+    success: "#10B981"
+    warning: "#F59E0B"
+    error: "#EF4444"
+  entity_colors:
+    "PERSON": "#4F46E5"
+    "ORG": "#06B6D4" 
+    "GPE": "#10B981"
+    "DATE": "#F59E0B"
+    "MONEY": "#7C3AED"
+    "TIME": "#EC4899"
+  
+# Common questions for suggestions
+questions:
+  common:
+    - "What are the key findings?"
+    - "Can you summarize the main points?"
+    - "Are there any important deadlines?"
+    - "What action items are recommended?"
+    - "Who are the key people mentioned?"
+    - "What financial or legal details are covered?"
+    - "Are there any risks or concerns?"
+    - "Does this document contain confidential data?" 

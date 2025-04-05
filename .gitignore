@@ -5,6 +5,7 @@ Thumbs.db
 # Build directories
 build/
 dist/
+*.egg-info/
 
 # Dependency directories
 node_modules/
@@ -12,10 +13,38 @@ vendor/
 
 # Environment files
 .env
+.env.local
+.venv/
+env/
+venv/
+ENV/
 
 # Log files
 *.log
+logs/*
+!logs/.gitkeep
 
 # IDE and editor files
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Streamlit
+.streamlit/
+
+# Local testing files
+temp/
+*.bak

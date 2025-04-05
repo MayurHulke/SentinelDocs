@@ -124,14 +124,24 @@ python -m spacy download en_core_web_sm
 
 ## 🖥️ Usage
 
-1. Start the application:
+1. Run the system check to verify your environment:
+   ```bash
+   python system_check.py
+   ```
+
+2. Start the application:
    ```bash
    streamlit run app.py
    ```
+   
+   Or use the Makefile:
+   ```bash
+   make run
+   ```
 
-2. Open your browser and navigate to the URL displayed in the terminal (typically http://localhost:8501)
+3. Open your browser and navigate to the URL displayed in the terminal (typically http://localhost:8501)
 
-3. Upload your documents and explore all features
+4. Upload your documents and explore all features
 
 <div align="center">
   <img src="assets/SentinelDocs-demo.gif" alt="SentinelDocs Workflow" width="80%">
@@ -149,7 +159,7 @@ python -m spacy download en_core_web_sm
    ```
 
 2. **LangChain Deprecation Warnings**:
-   These warnings don't affect functionality but can be fixed by updating the imports in the code:
+   You may see deprecation warnings about LangChain imports. These don't affect functionality, but can be resolved by updating the imports in the code:
    ```python
    # Change:
    from langchain_community.llms import Ollama
@@ -165,11 +175,37 @@ python -m spacy download en_core_web_sm
 4. **Package Conflicts**:
    If you encounter package version conflicts, consider using a virtual environment or conda environment as described in the installation section.
 
-5. **Empty Label Warnings**:
-   These are UI warnings from Streamlit that don't affect functionality.
+5. **Torch Path Warnings**:
+   You may see errors related to `torch.classes` and `__path__._path`. These are UI warnings from PyTorch and Streamlit interaction that don't affect functionality.
 
-6. **Torch Warning About __path__._path**:
-   This is a known issue with some versions of PyTorch and Streamlit but doesn't affect functionality.
+6. **FAISS Import Error**:
+   If the system check reports FAISS as missing despite having it installed, this is likely due to the package being named `faiss-cpu` but imported as `faiss`. The system check has been updated to look for the correct import name.
+
+## ⚙️ Project Structure
+
+The application is organized into several modules:
+
+```
+SentinelDocs/
+├── app.py                   # Main entry point
+├── sentineldocs/            # Main package
+│   ├── app.py               # Application core
+│   ├── document.py          # Document processing
+│   ├── analyze.py           # Semantic search and analysis
+│   ├── ui/                  # UI components
+│   │   ├── components.py    # Reusable UI elements
+│   │   └── styles.py        # CSS and styling
+│   └── utils/               # Utilities
+│       ├── config.py        # Configuration management
+│       ├── logging.py       # Logging setup
+│       ├── pdf.py           # PDF report generation
+│       └── embed.py         # Embedding utilities
+├── config/                  # Configuration files
+│   └── default.yaml         # Default settings
+├── tests/                   # Test modules
+├── logs/                    # Log files
+└── system_check.py          # Environment validation
+```
 
 ## ⚙️ How It Works
 
@@ -190,11 +226,19 @@ python -m spacy download en_core_web_sm
 4. **Semantic Search**: When you ask a question, finds the most relevant document passages
 5. **AI Response Generation**: Uses the Ollama LLM to generate responses based on the relevant context
 
-## 🔧 Customization
+## 🧪 Testing
 
-- **Change Default Model**: Select your preferred model from the dropdown in the sidebar
-- **Adjust Chunk Size**: Modify the `chunk_size` parameter in the code for different document segmentation
-- **Response Length**: Adjust the text context length in the `generate_response` function
+The application includes a test suite that can be run with:
+
+```bash
+python run_tests.py
+```
+
+Or using the Makefile:
+
+```bash
+make test
+```
 
 ## 👥 Contributing
 
