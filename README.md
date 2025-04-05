@@ -14,7 +14,7 @@
   <i>Analyze documents privately with local AI models. No data leaves your machine.</i>
 </p>
 
-<img src="https://github.com/MayurHulke/SentinelDocs/raw/main/assets/demo.png" alt="SentinelDocs Demo" width="80%">
+<img src="assets/SentinelDocs-demo.gif" alt="SentinelDocs Demo" width="80%">
 
 </div>
 
@@ -43,15 +43,14 @@
 
 ## 🤖 Supported Models
 
-SentinelDocs works with various [Ollama](https://ollama.ai) models. We've tested with:
+SentinelDocs works with various [Ollama](https://ollama.ai) models. I have tested with:
 
 <div align="center">
   <table>
     <tr>
-      <td align="center"><img src="https://ollama.com/public/models/deepseek-r1.jpg" width="80px" /><br><b>DeepSeek-R1</b><br><small>Recommended</small></td>
-      <td align="center"><img src="https://ollama.com/public/models/mistral.jpg" width="80px" /><br><b>Mistral</b></td>
-      <td align="center"><img src="https://ollama.com/public/models/llama3.jpg" width="80px" /><br><b>Llama 3</b></td>
-      <td align="center"><img src="https://ollama.com/public/models/phi3.jpg" width="80px" /><br><b>Phi-3</b></td>
+      <td align="center"><img src="assets/deepseek.png" width="80px" /><br><b>DeepSeek-R1</b><br><small>Recommended</small></td>
+      <td align="center"><img src="assets/mistral.png" width="80px" /><br><b>Mistral</b></td>
+      <td align="center"><img src="assets/llama.png" width="80px" /><br><b>Llama 3</b></td>
     </tr>
   </table>
 </div>
@@ -133,7 +132,7 @@ python -m spacy download en_core_web_sm
 3. Upload your documents and explore all features
 
 <div align="center">
-  <img src="https://github.com/MayurHulke/SentinelDocs/raw/main/assets/workflow.png" alt="SentinelDocs Workflow" width="80%">
+  <img src="assets/SentinelDocs-demo.gif" alt="SentinelDocs Workflow" width="80%">
 </div>
 
 ## 🛠️ Troubleshooting
