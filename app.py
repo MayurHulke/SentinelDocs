@@ -645,33 +645,34 @@ with main_tabs[1]:  # Questions Tab
             "Does this document contain confidential data?"
         ]
         
-        # Visual representation of suggested questions
-        st.markdown('<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">', unsafe_allow_html=True)
+        # Create clickable suggestion buttons using Streamlit
+        if "selected_question" not in st.session_state:
+            st.session_state.selected_question = ""
+            
+        # Handle suggestions with session state
+        cols = st.columns(4)
         for i, question in enumerate(common_questions):
-            st.markdown(f"""
-            <button onclick="document.getElementById('question-input').value = '{question}'; this.blur();" 
-                    style="background-color: #f1f5f9; border: none; border-radius: 16px; padding: 6px 12px; 
-                           font-size: 0.8rem; cursor: pointer; color: #475569;">
-                {question}
-            </button>
-            """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            col_idx = i % 4
+            with cols[col_idx]:
+                if st.button(question, key=f"q_{i}"):
+                    st.session_state.selected_question = question
         
-        # JavaScript to handle question suggestion clicks
-        st.markdown("""
-        <script>
-        function setQuestion(text) {
-            const element = document.getElementById('question-input');
-            element.value = text;
-        }
-        </script>
-        """, unsafe_allow_html=True)
+        # Main question input, pre-filled if a suggestion was clicked
+        user_question = st.text_input("Type your question:", value=st.session_state.selected_question, key="question-input")
         
-        # Main question input
-        user_question = st.text_input("Type your question:", key="question-input")
+        # Clear the selected question once it's been used
+        if user_question != st.session_state.selected_question and st.session_state.selected_question != "":
+            st.session_state.selected_question = ""
         
         # Generate response
-        if st.button("🔍 Analyze Documents", use_container_width=True):
+        analyze_button = st.button("🔍 Analyze Documents", use_container_width=True)
+        
+        # Auto-analyze when a suggestion is clicked (if user hasn't changed the question)
+        auto_analyze = False
+        if st.session_state.selected_question != "" and user_question == st.session_state.selected_question:
+            auto_analyze = True
+            
+        if analyze_button or auto_analyze:
             if not user_question:
                 st.error("Please enter a question.")
             else:
@@ -688,6 +689,10 @@ with main_tabs[1]:  # Questions Tab
 
                 # Append to query history
                 st.session_state.user_questions.append(user_question)
+                
+                # Clear selected question after use
+                if st.session_state.selected_question != "":
+                    st.session_state.selected_question = ""
 
                 # Display response in a card
                 st.markdown("### 💡 Answer")
