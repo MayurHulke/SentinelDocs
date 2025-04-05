@@ -1,29 +1,68 @@
 # 🙈 SentinelDocs
 
-**Your Private AI-Powered Document Analyst**
+<div align="center">
 
-SentinelDocs is a privacy-focused document analysis tool that leverages local AI models to analyze your documents without sending data to external services.
+![SentinelDocs](https://img.shields.io/badge/SentinelDocs-v1.0-orange)
+![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.22+-red?logo=streamlit)
+![Privacy](https://img.shields.io/badge/Privacy-100%25-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Ollama](https://img.shields.io/badge/Powered%20by-Ollama-purple)
 
-## Features
+<p align="center">
+  <b>Your Private AI-Powered Document Analyst</b><br>
+  <i>Analyze documents privately with local AI models. No data leaves your machine.</i>
+</p>
 
-- **📂 Multi-format Document Support**: Upload and process PDF, DOCX, and TXT files
-- **🔍 Semantic Search**: Ask questions about your documents and get accurate answers
-- **📊 Document Statistics**: View word count, character count, sentences, and key entities
-- **🧠 AI-Powered Analysis**: Uses Ollama-based local LLMs to analyze your documents
-- **🔄 Cross-Document Comparison**: Compare multiple documents to identify similarities and differences
-- **📱 Clean, Responsive UI**: Built with Streamlit for a modern and accessible interface
-- **📈 Entity Recognition**: Automatically identifies and extracts key entities (people, organizations, locations, etc.)
-- **📄 PDF Report Generation**: Create and download comprehensive insights reports
-- **🧩 Model Selection**: Choose from available Ollama models for different analysis needs
-- **🔐 Privacy Focused**: All processing happens locally, with no data sent to external APIs
+<img src="https://github.com/MayurHulke/SentinelDocs/raw/main/assets/demo.png" alt="SentinelDocs Demo" width="80%">
 
-## Requirements
+</div>
+
+## 🌟 Features
+
+<table>
+  <tr>
+    <td>
+      <ul>
+        <li>📂 <b>Multi-format Document Support</b>: PDF, DOCX, TXT</li>
+        <li>🔍 <b>AI-Powered Semantic Search</b>: Natural language queries</li>
+        <li>📊 <b>Document Statistics</b>: Word count, entities, etc.</li>
+        <li>📑 <b>Cross-Document Comparison</b>: Find similarities & differences</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <li>📋 <b>Entity Recognition</b>: Extract key people, organizations, etc.</li>
+        <li>📄 <b>PDF Report Generation</b>: Download comprehensive insights</li>
+        <li>🛡️ <b>100% Private</b>: All processing happens locally</li>
+        <li>🧩 <b>Multiple AI Models</b>: Choose your local LLM</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+## 🤖 Supported Models
+
+SentinelDocs works with various [Ollama](https://ollama.ai) models. We've tested with:
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><img src="https://ollama.com/public/models/deepseek-r1.jpg" width="80px" /><br><b>DeepSeek-R1</b><br><small>Recommended</small></td>
+      <td align="center"><img src="https://ollama.com/public/models/mistral.jpg" width="80px" /><br><b>Mistral</b></td>
+      <td align="center"><img src="https://ollama.com/public/models/llama3.jpg" width="80px" /><br><b>Llama 3</b></td>
+      <td align="center"><img src="https://ollama.com/public/models/phi3.jpg" width="80px" /><br><b>Phi-3</b></td>
+    </tr>
+  </table>
+</div>
+
+## 📋 Requirements
 
 - Python 3.8+ (3.10 recommended)
 - Ollama with LLM models installed (e.g., deepseek-r1:8b)
 - macOS, Linux, or Windows with WSL (for Ollama)
 
-## Installation
+## 🚀 Installation
 
 ### 1. Set Up Python Environment
 
@@ -82,7 +121,7 @@ python -m spacy download en_core_web_sm
    ollama pull llama3
    ```
 
-## Usage
+## 🖥️ Usage
 
 1. Start the application:
    ```bash
@@ -93,7 +132,11 @@ python -m spacy download en_core_web_sm
 
 3. Upload your documents and explore all features
 
-## Troubleshooting
+<div align="center">
+  <img src="https://github.com/MayurHulke/SentinelDocs/raw/main/assets/workflow.png" alt="SentinelDocs Workflow" width="80%">
+</div>
+
+## 🛠️ Troubleshooting
 
 ### Common Issues and Solutions
 
@@ -127,7 +170,18 @@ python -m spacy download en_core_web_sm
 6. **Torch Warning About __path__._path**:
    This is a known issue with some versions of PyTorch and Streamlit but doesn't affect functionality.
 
-## How It Works
+## ⚙️ How It Works
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>1️⃣</b><br>Document<br>Processing</td>
+      <td align="center"><b>2️⃣</b><br>Semantic<br>Indexing</td>
+      <td align="center"><b>3️⃣</b><br>NLP<br>Analysis</td>
+      <td align="center"><b>4️⃣</b><br>AI-Powered<br>Response</td>
+    </tr>
+  </table>
+</div>
 
 1. **Document Processing**: Extracts text from uploaded files
 2. **Document Indexing**: Creates a semantic index using FAISS for efficient retrieval
@@ -135,17 +189,17 @@ python -m spacy download en_core_web_sm
 4. **Semantic Search**: When you ask a question, finds the most relevant document passages
 5. **AI Response Generation**: Uses the Ollama LLM to generate responses based on the relevant context
 
-## Customization
+## 🔧 Customization
 
 - **Change Default Model**: Select your preferred model from the dropdown in the sidebar
 - **Adjust Chunk Size**: Modify the `chunk_size` parameter in the code for different document segmentation
 - **Response Length**: Adjust the text context length in the `generate_response` function
 
-## Contributing
+## 👥 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+## 📜 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
