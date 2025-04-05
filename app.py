@@ -28,6 +28,161 @@ if "referenced_docs" not in st.session_state:
 if "document_stats" not in st.session_state:
     st.session_state.document_stats = {}
 
+# Set page configuration with wider layout
+st.set_page_config(
+    page_title="SentinelDocs", 
+    page_icon="🙈", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Apply custom CSS for modern UI
+st.markdown("""
+<style>
+    /* Main theme colors */
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #818CF8;
+        --secondary: #06B6D4;
+        --text-dark: #1E293B;
+        --text-light: #64748B;
+        --bg-light: #F8FAFC;
+        --bg-dark: #0F172A;
+        --success: #10B981;
+        --warning: #F59E0B;
+        --error: #EF4444;
+        --radius: 8px;
+    }
+    
+    /* Base layout improvements */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Custom card component */
+    .card {
+        border-radius: var(--radius);
+        border: 1px solid #E2E8F0;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        background-color: white;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Headers styling */
+    h1, h2, h3, h4 {
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+    
+    h1 {
+        font-size: 2.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+        border-bottom: 2px solid var(--primary-light);
+        padding-bottom: 0.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+        margin-top: 1rem;
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: var(--bg-light);
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background-color: var(--primary);
+        color: white;
+        border-radius: var(--radius);
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+    
+    .stButton > button:hover {
+        background-color: var(--primary-light);
+    }
+    
+    /* File uploader styling */
+    .stFileUploader > div {
+        border-radius: var(--radius);
+    }
+    
+    /* Progress and spinners */
+    .stProgress .st-bo {
+        background-color: var(--primary);
+    }
+    
+    /* Info boxes */
+    .stAlert {
+        border-radius: var(--radius);
+    }
+    
+    /* Status badges */
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .badge-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .badge-secondary {
+        background-color: var(--secondary);
+        color: white;
+    }
+    
+    .badge-success {
+        background-color: var(--success);
+        color: white;
+    }
+    
+    /* Dividers */
+    hr {
+        margin: 2rem 0;
+        border-color: #E2E8F0;
+    }
+    
+    /* Logo and app header */
+    .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        margin-bottom: 2rem;
+    }
+    
+    .logo-img {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 1rem;
+    }
+    
+    /* Two-column layout */
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Check if Ollama server is available
 def check_ollama_availability():
     try:
@@ -267,203 +422,348 @@ def compare_documents(documents, model_name="deepseek-r1:8b"):
     except Exception as e:
         return f"Error comparing documents: {str(e)}"
 
-# Configure Streamlit page layout
-st.set_page_config(page_title="SentinelDocs", page_icon="🙈", layout="centered")
-
 # Check Ollama availability
 ollama_available = check_ollama_availability()
-if not ollama_available:
-    st.error("⚠️ Ollama service is not available. Please make sure the Ollama server is running locally.")
 
 # Get available models
 available_models = get_available_models()
 
-# Render title and description
-st.markdown(
-    """
-    <div style='text-align: center;'>
-        <h1>🙈 SentinelDocs</h1>
-        <h4 style='color: gray;'>Your Private AI-Powered Document Analyst</h4>
+# Render custom header with logo and title
+st.markdown("""
+<div class="app-header">
+    <div class="logo-img" style="font-size: 80px; display: flex; justify-content: center; align-items: center;">
+        📄
     </div>
-    """,
-    unsafe_allow_html=True,
-)
-st.write("")
+    <h1>SentinelDocs</h1>
+    <p style="color: var(--text-light); font-size: 1.2rem; margin-top: -0.5rem;">Your Private AI-Powered Document Analyst</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Show Ollama warning if not available
+if not ollama_available:
+    st.error("⚠️ Ollama service is not available. Please make sure the Ollama server is running locally.")
 
 # Setup sidebar
 with st.sidebar:
-    st.subheader("⚙️ Settings")
+    st.markdown("### ⚙️ Settings")
     
-    # Model selection
-    selected_model = st.selectbox(
-        "Select AI Model:",
-        available_models,
-        index=0 if "deepseek-r1:8b" not in available_models else available_models.index("deepseek-r1:8b")
+    # Model selection with icons and descriptions
+    st.markdown("#### Select AI Model")
+    model_descriptions = {
+        "deepseek-r1:8b": "Best for detailed analysis",
+        "mistral": "Good balance of speed and accuracy",
+        "llama3": "Best for creative responses",
+        "phi3:mini": "Fast and efficient"
+    }
+    
+    # Check which models are available and add descriptions
+    model_options = []
+    for model in available_models:
+        desc = model_descriptions.get(model, "")
+        if desc:
+            model_options.append(f"{model} - {desc}")
+        else:
+            model_options.append(model)
+    
+    selected_model_option = st.selectbox(
+        "Choose a model:",
+        options=model_options,
+        index=0
     )
+    
+    # Extract just the model name from selection
+    selected_model = selected_model_option.split(" - ")[0] if " - " in selected_model_option else selected_model_option
     
     st.markdown("---")
     
-    # Question history section will follow
-
-# File upload interface
-st.subheader("📂 Upload Your Documents")
-uploaded_files = st.file_uploader(
-    "Upload PDF, DOCX, or TXT files", type=["pdf", "docx", "txt"], accept_multiple_files=True
-)
-
-if uploaded_files:
-    try:
-        document_texts = extract_text_from_files(uploaded_files)
-        
-        if not document_texts:
-            st.error("No text could be extracted from the uploaded files.")
-        else:
-            # Generate document statistics
-            st.session_state.document_stats = analyze_document_stats(document_texts)
+    # Question history with better styling
+    st.markdown("### 💬 Question History")
+    
+    if st.session_state.user_questions:
+        for i, q in enumerate(st.session_state.user_questions, 1):
+            st.markdown(f"""<div style="margin-bottom: 8px; padding: 8px; background-color: #f1f5f9; border-radius: 4px;">
+                <span style="font-size: 0.8rem; color: #64748b;">Q{i}:</span> {q}
+            </div>""", unsafe_allow_html=True)
             
-            st.markdown("---")
-            
-            # Display document stats
-            st.subheader("📊 Document Statistics")
-            for doc_name, stats in st.session_state.document_stats.items():
-                with st.expander(f"📄 {doc_name} Stats"):
-                    st.write(f"**Words:** {stats['word_count']}")
-                    st.write(f"**Characters:** {stats['char_count']}")
-                    if 'sentences' in stats:
-                        st.write(f"**Sentences:** {stats['sentences']}")
-                    
-                    # Display entity information if available
-                    if stats.get('entities'):
-                        st.write("**Key Entities:**")
-                        for entity_type, examples in stats['entities'].items():
-                            if examples:
-                                st.write(f"- {entity_type}: {', '.join(examples)}")
-            
-            # Display extracted text
-            st.subheader("📖 Extracted Content")
-            with st.expander("📄 Click to View Extracted Text"):
-                for doc_name, doc_text in document_texts.items():
-                    st.markdown(f"**{doc_name}**")
-                    st.text_area(
-                        label=f"Content of {doc_name}", 
-                        value=doc_text[:1000], 
-                        height=150,
-                        label_visibility="collapsed"
-                    )
+        # Clear history button
+        if st.button("🗑️ Clear History", key="clear_history"):
+            st.session_state.user_questions = []
+            st.experimental_rerun()
+    else:
+        st.write("No previous questions yet.")
+    
+    # Add version info at bottom
+    st.markdown("---")
+    st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.8rem;'>SentinelDocs v1.0</div>", unsafe_allow_html=True)
 
-            # Add document comparison section if multiple docs
-            if len(document_texts) >= 2:
-                st.markdown("---")
-                st.subheader("🔄 Document Comparison")
-                if st.button("Compare Documents", key="compare_docs"):
-                    with st.spinner("Analyzing document similarities and differences..."):
-                        comparisons = compare_documents(document_texts, selected_model)
+# Main content area with tabs
+main_tabs = st.tabs(["📂 Documents", "❓ Ask Questions", "📊 Insights"])
+
+with main_tabs[0]:  # Documents Tab
+    st.markdown("### Upload Your Documents")
+    
+    # File upload with guidelines
+    st.markdown("""
+    <div class="card">
+        <p>Upload PDF, DOCX, or TXT files for analysis. Your documents stay private and are processed locally.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    uploaded_files = st.file_uploader(
+        "Choose files", type=["pdf", "docx", "txt"], accept_multiple_files=True
+    )
+    
+    if uploaded_files:
+        try:
+            document_texts = extract_text_from_files(uploaded_files)
+            
+            if not document_texts:
+                st.error("No text could be extracted from the uploaded files.")
+            else:
+                # Generate document statistics
+                st.session_state.document_stats = analyze_document_stats(document_texts)
+                
+                st.success(f"✅ Successfully processed {len(document_texts)} document(s)")
+                
+                # Document stats cards in two columns
+                st.markdown("### 📊 Document Statistics")
+                
+                # Create two columns
+                cols = st.columns(len(document_texts) if len(document_texts) <= 3 else 3)
+                
+                for idx, (doc_name, stats) in enumerate(st.session_state.document_stats.items()):
+                    col_idx = idx % len(cols)
+                    with cols[col_idx]:
+                        st.markdown(f"""
+                        <div class="card">
+                            <h3>{doc_name}</h3>
+                            <p><b>Words:</b> {stats['word_count']}</p>
+                            <p><b>Characters:</b> {stats['char_count']}</p>
+                            <p><b>Sentences:</b> {stats.get('sentences', 'N/A')}</p>
+                            
+                            <div style="margin-top: 10px;">
+                                <p><b>Key Entities:</b></p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                        """, unsafe_allow_html=True)
                         
-                        if isinstance(comparisons, str):
-                            st.error(comparisons)
-                        else:
-                            for pair, result in comparisons.items():
-                                with st.expander(f"📊 {pair}"):
-                                    st.markdown(result)
+                        # Add entity badges with different colors based on type
+                        entity_colors = {
+                            "PERSON": "#4F46E5",
+                            "ORG": "#06B6D4", 
+                            "GPE": "#10B981",
+                            "DATE": "#F59E0B",
+                            "MONEY": "#7C3AED",
+                            "TIME": "#EC4899"
+                        }
+                        
+                        if stats.get('entities'):
+                            for entity_type, examples in stats['entities'].items():
+                                if examples:
+                                    color = entity_colors.get(entity_type, "#64748B")
+                                    for example in examples[:3]:  # Limit to 3 examples per type
+                                        st.markdown(f"""
+                                        <span class="badge" style="background-color: {color};">
+                                            {example}
+                                        </span>
+                                        """, unsafe_allow_html=True)
+                        
+                        st.markdown("</div></div></div>", unsafe_allow_html=True)
+                
+                # Document preview tab
+                st.markdown("### 📄 Document Preview")
+                with st.expander("Click to View Document Content"):
+                    for doc_name, doc_text in document_texts.items():
+                        st.markdown(f"**{doc_name}**")
+                        st.text_area(
+                            label=f"Content of {doc_name}", 
+                            value=doc_text[:1000] + ("..." if len(doc_text) > 1000 else ""), 
+                            height=150,
+                            label_visibility="collapsed"
+                        )
+                
+                # Add document comparison section if multiple docs
+                if len(document_texts) >= 2:
+                    st.markdown("### 🔄 Document Comparison")
+                    st.markdown("""
+                    <div class="card">
+                        <p>Compare documents to find similarities and differences between their content.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    if st.button("Compare Documents", key="compare_docs"):
+                        with st.spinner("Analyzing document similarities and differences..."):
+                            comparisons = compare_documents(document_texts, selected_model)
+                            
+                            if isinstance(comparisons, str):
+                                st.error(comparisons)
+                            else:
+                                for pair, result in comparisons.items():
+                                    with st.expander(f"📊 {pair}"):
+                                        st.markdown(result)
+        
+        except Exception as e:
+            st.error(f"Error processing documents: {str(e)}")
 
-            # Add document selection option
-            st.markdown("---")
-            st.subheader("🔍 Document Search Settings")
-            search_option = st.radio(
-                "How would you like to search?",
-                ["Search across all documents", "Search specific document"]
+with main_tabs[1]:  # Questions Tab
+    if not uploaded_files:
+        st.info("Please upload documents in the Documents tab first.")
+    else:
+        st.markdown("### 💡 Ask Questions About Your Documents")
+        
+        # UI for search settings
+        st.markdown("""
+        <div class="card">
+            <p>Ask any question about your documents. SentinelDocs will find the most relevant information.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Document selection option
+        search_option = st.radio(
+            "Search method:",
+            ["Search across all documents", "Search specific document"],
+            horizontal=True
+        )
+        
+        specific_doc = None
+        if search_option == "Search specific document":
+            specific_doc = st.selectbox(
+                "Select document:",
+                list(document_texts.keys())
             )
-            
-            specific_doc = None
-            if search_option == "Search specific document":
-                specific_doc = st.selectbox(
-                    "Select document to query:",
-                    list(document_texts.keys())
-                )
-
-            # Suggested questions for user
-            st.markdown("---")
-            st.subheader("💡 Ask Me Anything About Your Documents")
-
-            common_questions = [
-                "What are the key findings?",
-                "Can you summarize the main points?",
-                "Are there any important deadlines?",
-                "What action items are recommended?",
-                "Who are the key people mentioned?",
-                "What financial or legal details are covered?",
-                "Are there any risks or concerns?",
-                "Does this document contain confidential data?"
-            ]
-
-            selected_question = st.selectbox(
-                "Pick a suggested question or type your own:", ["Choose a question"] + common_questions
-            )
-
-            # User input for custom questions
-            user_question = st.text_input(
-                "Or enter your own question:", value=selected_question if selected_question != "Choose a question" else ""
-            )
-
-            # Generate and display AI response
-            if st.button("🔍 Analyse", use_container_width=True):
-                if not user_question:
-                    st.error("Please enter a question or select a suggested one.")
-                else:
-                    # Display loading indicator
-                    with st.spinner("Analyzing documents... This may take a moment."):
-                        # Generate response 
-                        if search_option == "Search specific document" and specific_doc:
-                            response = generate_response(user_question, document_texts, specific_doc, selected_model)
-                            sources = [specific_doc]
-                        else:
-                            # Use semantic search across all documents
-                            response = generate_response(user_question, document_texts, None, selected_model)
-                            sources = st.session_state.referenced_docs if "referenced_docs" in st.session_state else []
+        
+        # Question input with example questions
+        st.markdown("#### Your Question")
+        
+        common_questions = [
+            "What are the key findings?",
+            "Can you summarize the main points?",
+            "Are there any important deadlines?",
+            "What action items are recommended?",
+            "Who are the key people mentioned?",
+            "What financial or legal details are covered?",
+            "Are there any risks or concerns?",
+            "Does this document contain confidential data?"
+        ]
+        
+        # Visual representation of suggested questions
+        st.markdown('<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">', unsafe_allow_html=True)
+        for i, question in enumerate(common_questions):
+            st.markdown(f"""
+            <button onclick="document.getElementById('question-input').value = '{question}'; this.blur();" 
+                    style="background-color: #f1f5f9; border: none; border-radius: 16px; padding: 6px 12px; 
+                           font-size: 0.8rem; cursor: pointer; color: #475569;">
+                {question}
+            </button>
+            """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # JavaScript to handle question suggestion clicks
+        st.markdown("""
+        <script>
+        function setQuestion(text) {
+            const element = document.getElementById('question-input');
+            element.value = text;
+        }
+        </script>
+        """, unsafe_allow_html=True)
+        
+        # Main question input
+        user_question = st.text_input("Type your question:", key="question-input")
+        
+        # Generate response
+        if st.button("🔍 Analyze Documents", use_container_width=True):
+            if not user_question:
+                st.error("Please enter a question.")
+            else:
+                # Display loading indicator
+                with st.spinner("Analyzing documents... This may take a moment."):
+                    # Generate response 
+                    if search_option == "Search specific document" and specific_doc:
+                        response = generate_response(user_question, document_texts, specific_doc, selected_model)
+                        sources = [specific_doc]
+                    else:
+                        # Use semantic search across all documents
+                        response = generate_response(user_question, document_texts, None, selected_model)
+                        sources = st.session_state.referenced_docs if "referenced_docs" in st.session_state else []
 
                 # Append to query history
                 st.session_state.user_questions.append(user_question)
 
-                st.markdown("---")
-                st.subheader("💡 Here's what we found")
+                # Display response in a card
+                st.markdown("### 💡 Answer")
                 
-                # Display sources and model used
-                st.markdown(f"**Model Used:** {selected_model}")
+                # Show sources and model
+                st.markdown("""
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+                    <span class="badge badge-primary">Model: {}</span>
+                """.format(selected_model), unsafe_allow_html=True)
+                
                 if sources:
-                    st.markdown("**Sources:**")
                     for source in sources:
-                        st.markdown(f"- {source}")
-                    
-                st.info(response)  # Display response
+                        st.markdown(f"""<span class="badge badge-secondary">Source: {source}</span>""", unsafe_allow_html=True)
+                
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+                # Display the actual response in a card
+                st.markdown(f"""
+                <div class="card" style="background-color: #f8fafc;">
+                    {response.replace('\n', '<br>')}
+                </div>
+                """, unsafe_allow_html=True)
 
-            # Display query history in sidebar
-            with st.sidebar:
-                st.subheader("💬 Question History")
-                if st.session_state.user_questions:
-                    for i, q in enumerate(st.session_state.user_questions, 1):
-                        st.write(f"{i}. {q}")
-                else:
-                    st.write("No previous questions yet.")
-                    
-                # Add clear history button
-                if st.session_state.user_questions and st.button("Clear History"):
-                    st.session_state.user_questions = []
-                    st.experimental_rerun()
+with main_tabs[2]:  # Insights Tab
+    if not uploaded_files:
+        st.info("Please upload documents in the Documents tab first.")
+    else:
+        st.markdown("### 📊 Document Insights & Reports")
+        
+        st.markdown("""
+        <div class="card">
+            <p>Generate comprehensive reports and extract key insights from your documents.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Report generation options
+        report_type = st.radio(
+            "Report type:",
+            ["Executive Summary", "Key Insights", "Full Analysis"],
+            horizontal=True
+        )
+        
+        report_prompts = {
+            "Executive Summary": "Create a concise executive summary of the document in 3-5 bullet points",
+            "Key Insights": "Summarize the key insights and takeaways from this document",
+            "Full Analysis": "Perform a detailed analysis of the document including key points, entities, recommendations, and potential issues"
+        }
+        
+        if st.button("📄 Generate Report", use_container_width=True):
+            with st.spinner(f"Generating {report_type.lower()}... This may take a minute."):
+                insights = {doc: generate_response(report_prompts[report_type], document_texts, doc, selected_model) for doc in document_texts}
+                pdf_file = generate_pdf_report(insights)
+                
+            # Success message with download button
+            st.success(f"✅ {report_type} generated successfully!")
+            
+            with open(pdf_file, "rb") as file:
+                st.download_button(
+                    label="📥 Download Report",
+                    data=file,
+                    file_name=f"SentinelDocs_{report_type.replace(' ', '_')}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+                
+            # Clean up temp file
+            try:
+                os.remove(pdf_file)
+            except:
+                pass
 
-            # Generate and download PDF report
-            st.markdown("---")
-            if st.button("📄 Download Insights Report", use_container_width=True):
-                with st.spinner("Generating comprehensive report..."):
-                    insights = {doc: generate_response("Summarize the key insights", document_texts, doc, selected_model) for doc in document_texts}
-                    pdf_file = generate_pdf_report(insights)
-                    
-                with open(pdf_file, "rb") as file:
-                    st.download_button("Download Report", file, file_name="AI_Report.pdf", mime="application/pdf")
-                    
-                # Clean up temp file
-                try:
-                    os.remove(pdf_file)
-                except:
-                    pass
-    except Exception as e:
-        st.error(f"Error processing documents: {str(e)}")
+# Footer with additional information
+st.markdown("""
+<div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+    <p style="color: #64748b; font-size: 0.9rem;">
+        SentinelDocs - Your documents never leave your machine. All processing happens locally.
+    </p>
+</div>
+""", unsafe_allow_html=True)
