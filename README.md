@@ -1,8 +1,8 @@
-# 📄 SentinelDocs
+# 🔒 SentinelDocs
 
 <div align="center">
 
-<div style="font-size: 80px; margin-bottom: 20px;">📄</div>
+<div style="font-size: 80px; margin-bottom: 20px;">🔒</div>
 
 ![SentinelDocs](https://img.shields.io/badge/SentinelDocs-v1.0-orange)
 ![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
